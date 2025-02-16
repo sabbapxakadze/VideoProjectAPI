@@ -71,6 +71,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+#region Enabling Cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") // React App URL
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // Allows cookies, authorization headers, etc.
+        });
+});
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -94,6 +108,8 @@ using (var scope = app.Services.CreateScope())
 #endregion
 
 app.UseStaticFiles();
+
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication(); // added auth middleware
 app.UseAuthorization();
